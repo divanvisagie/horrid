@@ -3,10 +3,18 @@ package main
 import (
 	"fmt"
 	"os/exec"
+	"strings"
 )
 
 func runCommand(command string) string {
-	commandOutput, err := exec.Command(command).Output()
+	commandStructure := strings.Split(command, " ")
+
+	args := commandStructure[1:]
+	fmt.Println(args)
+
+	spacedArgs := strings.Join(args, " ")
+
+	commandOutput, err := exec.Command(commandStructure[0], spacedArgs).Output()
 	if err != nil {
 		return err.Error()
 	}
@@ -15,7 +23,7 @@ func runCommand(command string) string {
 
 func main() {
 
-	output := runCommand("ls")
+	output := runCommand("cat main.go")
 
 	fmt.Println(output)
 }
