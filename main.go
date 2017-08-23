@@ -3,16 +3,19 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
+	"os"
 	"os/exec"
 	"strings"
 )
+
+var mylog = log.New(os.Stderr, "app: ", log.LstdFlags|log.Lshortfile)
 
 func runCommand(command string) string {
 	commandStructure := strings.Split(command, " ")
 
 	args := commandStructure[1:]
-	fmt.Println(args)
 
 	spacedArgs := strings.Join(args, " ")
 
@@ -26,7 +29,7 @@ func runCommand(command string) string {
 func handler(w http.ResponseWriter, r *http.Request) {
 	bodyBytes, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		panic(err)
+		mylog.Fatalln(err.Error())
 	}
 	bodyString := string(bodyBytes)
 	output := runCommand(bodyString)
